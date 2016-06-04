@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -30,14 +31,15 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialogF
     //2 Convert your xml objects to java objects: Typecasting
     //3 Initialize your UI views
     private static final int REQUEST_CODE = 1;
+    EditText first_Name, last_Name;
     TextView dob_Text;
-    Button btn_Confirm;
-    Button btn_DoB;
+    Button btn_Confirm, btn_DoB;
     int counter =0;
     String[] country_List;
     Spinner spinner;
     Bitmap bitmap;
     ImageView imageBtn;
+    String valid_f_name = null, valid_l_name= null, valid_dob= null, valid_country= null, valid_gender = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +94,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialogF
         ArrayAdapter<CharSequence>adapter = ArrayAdapter.createFromResource(this, R.array.list_of_countries,android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         imageBtn = (ImageView)findViewById(R.id.profile_Image);
-
+        first_Name = (EditText)findViewById(R.id.editText_first_name);
+        last_Name = (EditText)findViewById(R.id.editText_last_name);
     }
 
     public void pickImage(View View) {
@@ -170,6 +173,14 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialogF
 
         monthOfYear++;
         dob_Text.setText(getString(R.string.date_picker_result_value, year, monthOfYear, dayOfMonth));
+    }
+
+    public void add_entry(){
+        valid_f_name = first_Name.getText().toString();
+        valid_l_name = last_Name.getText().toString();
+        valid_country = spinner.getSelectedItem().toString();
+
+
     }
 }
 
