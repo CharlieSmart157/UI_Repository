@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,6 +15,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,7 +42,11 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialogF
     Spinner spinner;
     Bitmap bitmap;
     ImageView imageBtn;
-    String valid_f_name = null, valid_l_name= null, valid_dob= null, valid_country= null, valid_gender = null;
+    Uri imageAddress;
+    RadioButton m_rad_btn, f_rad_btn, o_rad_btn;
+    RadioGroup r_group;
+    String  valid_profile_pic = null, valid_f_name = null, valid_l_name= null, valid_dob= null, valid_country= null, valid_gender = null;
+    DatabaseHandler dbHandler = new DatabaseHandler(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +103,10 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialogF
         imageBtn = (ImageView)findViewById(R.id.profile_Image);
         first_Name = (EditText)findViewById(R.id.editText_first_name);
         last_Name = (EditText)findViewById(R.id.editText_last_name);
+        m_rad_btn = (RadioButton)findViewById(R.id.Rbtn_Male);
+        f_rad_btn = (RadioButton)findViewById(R.id.Rbtn_Female);
+        o_rad_btn = (RadioButton)findViewById(R.id.Rbtn_Other);
+        r_group = (RadioGroup)findViewById(R.id.r_Group_1);
     }
 
     public void pickImage(View View) {
@@ -107,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialogF
         startActivityForResult(intent, REQUEST_CODE);
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         InputStream stream = null;
@@ -116,6 +128,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialogF
                 if (bitmap != null) {
                     bitmap.recycle();
                 }
+
+                imageAddress = data.getData();
                 stream = getContentResolver().openInputStream(data.getData());
                 bitmap = BitmapFactory.decodeStream(stream);
 
@@ -175,13 +189,27 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialogF
         dob_Text.setText(getString(R.string.date_picker_result_value, year, monthOfYear, dayOfMonth));
     }
 
-    public void add_entry(){
+    public void add_entry(View view){
         valid_f_name = first_Name.getText().toString();
         valid_l_name = last_Name.getText().toString();
         valid_country = spinner.getSelectedItem().toString();
+        valid_dob = dob_Text.getText().toString();
+        RadioButton selected = (RadioButton)findViewById(r_group.getCheckedRadioButtonId());
+        valid_gender = (String)selected.getText().toString();
+        valid_profile_pic = imageAddress.toString();
+        dbHandler.Add_Contact(new Contact(valid_f_name, valid_l_name, valid_country,
+                valid_dob, valid_gender,valid_profile_pic));
+        Toast.makeText(getApplicationContext(), "Contact Created", Toast.LENGTH_LONG).show();
 
-
+        Intent view_user = new Intent(MainActivity.this,
+                Main2Activity.class);
+        view_user.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(view_user);
+        finish();
     }
+
+
 }
 
 

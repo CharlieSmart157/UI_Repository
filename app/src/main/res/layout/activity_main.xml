@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Ok"
-        android:onClick= "Increment"
+        android:onClick= "add_entry"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_alignParentEnd="true"
@@ -124,7 +124,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_above="@+id/btn_Image"
-        android:layout_toEndOf="@+id/editText"
+        android:layout_toEndOf="@+id/editText_first_name"
         android:layout_alignStart="@+id/btn_Image" />
 
     <Button
