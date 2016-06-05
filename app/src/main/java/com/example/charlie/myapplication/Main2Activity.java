@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +25,6 @@ public class Main2Activity extends AppCompatActivity {
     ArrayList<Contact> items = new ArrayList<Contact>();
     Contact_Adapter itemsAdapter;
     ListView lvItems;
-    Button add_btn;
     DatabaseHandler db;
 
     @Override
@@ -33,18 +34,19 @@ public class Main2Activity extends AppCompatActivity {
      //   readItems();
         lvItems = (ListView)findViewById(R.id.lvItems);
         lvItems.setItemsCanFocus(false);
-        add_btn = (Button)findViewById(R.id.add_btn);
 
         Set_refreshed_data();
 
     }
 
-    /*public void onAddItem(View v){
-        EditText etNewItem = (EditText)findViewById(R.id.etNewItem);
-        String itemText = etNewItem.getText().toString();
-        itemsAdapter.add(itemText);
-        etNewItem.setText("");
-       // writeItems();
+    public void onAddItem(View v){
+        Intent add_user = new Intent(Main2Activity.this,
+                MainActivity.class);
+        add_user.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_NEW_TASK);
+        add_user.putExtra("called", "add");
+        startActivity(add_user);
+        finish();
 
     }
 /*
@@ -165,8 +167,10 @@ public class Main2Activity extends AppCompatActivity {
             holder.dob_text.setText(user.get_dob());
             holder.country_text.setText(user.get_country());
             holder.gender_text.setText(user.get_gender());
-            holder.profile_picture.setImageURI(Uri.parse(user.get_picture()));
-
+            //Decode Image
+            byte[] imageOutput = Base64.decode(user.get_picture().getBytes(),Base64.DEFAULT);
+            Bitmap img = BitmapFactory.decodeByteArray(imageOutput,0,imageOutput.length);
+            holder.profile_picture.setImageBitmap(img);
 
             holder.edit.setOnClickListener(new View.OnClickListener() {
 

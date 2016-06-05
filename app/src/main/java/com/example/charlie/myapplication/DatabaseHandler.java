@@ -137,7 +137,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_NAME2, contact.get_nameLast());
         values.put(KEY_COUNTRY, contact.get_country());
         values.put(KEY_DOB, contact.get_dob());
-        values.put(KEY_GENDER, contact.get_picture());
+        values.put(KEY_GENDER, contact.get_gender());
+        values.put(KEY_PICTURE, contact.get_picture());
 
         //Updating Rows
         return db.update(TABLE_CONTACTS,values, KEY_ID + " = ?", new String[]{String.valueOf(contact.getID())});

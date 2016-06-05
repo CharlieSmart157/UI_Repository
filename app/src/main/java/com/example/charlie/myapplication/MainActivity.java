@@ -6,9 +6,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.codetroopers.betterpickers.datepicker.DatePickerBuilder;
 import com.codetroopers.betterpickers.datepicker.DatePickerDialogFragment;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,12 +38,13 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialogF
     EditText first_Name, last_Name;
     TextView dob_Text;
     Button btn_Confirm, btn_DoB;
-    int counter =0;
+    int counter =0, USER_ID;
+    boolean update = false;
     String[] country_List;
     Spinner spinner;
     Bitmap bitmap;
     ImageView imageBtn;
-    Uri imageAddress;
+    String imageAddress;
     RadioButton m_rad_btn, f_rad_btn, o_rad_btn;
     RadioGroup r_group;
     String  valid_profile_pic = null, valid_f_name = null, valid_l_name= null, valid_dob= null, valid_country= null, valid_gender = null;
@@ -53,6 +55,26 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialogF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initializeUI();
+
+        String called_from = getIntent().getStringExtra("called");
+
+        if (called_from.equalsIgnoreCase("update")) {
+
+
+          USER_ID = Integer.parseInt(getIntent().getStringExtra("USER_ID"));
+            update = true;
+            Contact c = dbHandler.Get_Contact(USER_ID);
+
+            first_Name.setText(c.get_nameFirst());
+            last_Name.setText(c.get_nameLast());
+            dob_Text.setText(c.get_dob());
+            byte[] imageOutput = Base64.decode(c.get_picture().getBytes(),Base64.DEFAULT);
+            Bitmap img = BitmapFactory.decodeByteArray(imageOutput,0,imageOutput.length);
+            imageBtn.setImageBitmap(img);
+            imageAddress = c.get_picture();
+            // dbHandler.close();
+        }
+
         Log.i("Activity_Cycle", "onCreate CALLED");
     }
     @Override
@@ -129,10 +151,13 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialogF
                     bitmap.recycle();
                 }
 
-                imageAddress = data.getData();
+
                 stream = getContentResolver().openInputStream(data.getData());
                 bitmap = BitmapFactory.decodeStream(stream);
-
+                ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG,0,stream2);
+                byte[] inputData = stream2.toByteArray();
+                imageAddress = Base64.encodeToString(inputData, Base64.DEFAULT);
                 imageBtn.setImageBitmap(bitmap);
 
             } catch (FileNotFoundException e) {
@@ -196,11 +221,17 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialogF
         valid_dob = dob_Text.getText().toString();
         RadioButton selected = (RadioButton)findViewById(r_group.getCheckedRadioButtonId());
         valid_gender = (String)selected.getText().toString();
-        valid_profile_pic = imageAddress.toString();
-        dbHandler.Add_Contact(new Contact(valid_f_name, valid_l_name, valid_country,
-                valid_dob, valid_gender,valid_profile_pic));
-        Toast.makeText(getApplicationContext(), "Contact Created", Toast.LENGTH_LONG).show();
-
+        valid_profile_pic = imageAddress;
+        if(update == false) {
+            dbHandler.Add_Contact(new Contact(valid_f_name, valid_l_name, valid_country,
+                    valid_dob, valid_gender, valid_profile_pic));
+            Toast.makeText(getApplicationContext(), "Contact Created", Toast.LENGTH_LONG).show();
+        }
+        else {
+            dbHandler.Update_Contact(new Contact(USER_ID, valid_f_name, valid_l_name, valid_country,
+                    valid_dob, valid_gender, valid_profile_pic));
+            Toast.makeText(getApplicationContext(), "Contact Updated", Toast.LENGTH_LONG).show();
+        }
         Intent view_user = new Intent(MainActivity.this,
                 Main2Activity.class);
         view_user.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
