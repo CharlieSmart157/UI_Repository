@@ -19,12 +19,13 @@
             android:layout_column="0" />
 
         <ImageView
-            android:layout_width="90dp"
-            android:layout_height="90dp"
+            android:layout_width="162dp"
+            android:layout_height="162dp"
             android:id="@+id/user_picture"
             android:src="@drawable/ic_launcher"
             android:layout_row="0"
-            android:layout_column="4" />
+            android:layout_column="4"
+            android:paddingRight="40dp"/>
 
         <TextView
             android:layout_width="246dp"

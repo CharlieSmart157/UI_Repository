@@ -72,7 +72,24 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialogF
             Bitmap img = BitmapFactory.decodeByteArray(imageOutput,0,imageOutput.length);
             imageBtn.setImageBitmap(img);
             imageAddress = c.get_picture();
-            // dbHandler.close();
+
+            if(c.get_gender().equalsIgnoreCase("M")){
+                m_rad_btn.setChecked(true);
+            }
+            else
+            if(c.get_gender().equalsIgnoreCase("F")){
+                f_rad_btn.setChecked(true);
+            }
+            else
+            if(c.get_gender().equalsIgnoreCase("O")){
+                o_rad_btn.setChecked(true);
+            }
+
+
+                    spinner.setSelection(((ArrayAdapter<String>)spinner.getAdapter()).getPosition(c.get_country()));
+
+
+
         }
 
         Log.i("Activity_Cycle", "onCreate CALLED");
