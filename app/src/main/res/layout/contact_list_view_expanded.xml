@@ -22,7 +22,7 @@
             android:layout_width="162dp"
             android:layout_height="162dp"
             android:id="@+id/user_picture"
-            android:src="@drawable/ic_launcher"
+            android:src="@android:drawable/ic_menu_camera"
             android:layout_row="0"
             android:layout_column="4"
             android:paddingRight="40dp"/>
@@ -75,7 +75,7 @@
             android:id="@+id/btn_edit"
             android:layout_row="6"
             android:layout_column="0"
-            android:background="@drawable/edit" />
+            android:background="@android:drawable/ic_menu_edit" />
 
         <Button
             android:layout_width="wrap_content"
@@ -83,7 +83,7 @@
             android:id="@+id/btn_delete"
             android:layout_row="6"
             android:layout_column="4"
-            android:background="@drawable/cancle" />
+            android:background="@android:drawable/ic_delete" />
 
     </GridLayout>
 

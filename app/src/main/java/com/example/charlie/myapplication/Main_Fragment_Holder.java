@@ -23,7 +23,8 @@ public class Main_Fragment_Holder extends AppCompatActivity implements Interface
     // action bar
     private ActionBar actionBar;
     private boolean isEditing = false;
-    MenuItem add_btn, save_btn;
+    MenuItem add_btn, cancel_btn;
+    Fragment fragment = null;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,7 @@ public class Main_Fragment_Holder extends AppCompatActivity implements Interface
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         add_btn=menu.findItem(R.id.action_add);
+        cancel_btn=menu.findItem(R.id.action_cancel);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -74,7 +76,13 @@ public class Main_Fragment_Holder extends AppCompatActivity implements Interface
                 }
                 SelectItem(1,0);
                 return true;
-
+            case R.id.action_cancel:
+                isEditing = false;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    this.invalidateOptionsMenu();
+                }
+                SelectItem(0,0);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -87,32 +95,45 @@ public class Main_Fragment_Holder extends AppCompatActivity implements Interface
 
         if (isEditing) {
             add_btn.setVisible(false); // hide Add button
-           // save_btn.setVisible(true); // show the Save button
+            cancel_btn.setVisible(true); // show the cancel button
         } else if (!isEditing) {
             add_btn.setVisible(true); // show Add button
-          //  save_btn.setVisible(false); // hide the Save button
+            cancel_btn.setVisible(false); // hide the cancel button
         }
 
         return true;
     }
 
     public void SelectItem(int position, int user){
-        Fragment fragment = null;
+
+
         Bundle args = new Bundle();
         Log.i("SelectItem",""+user);
         //Insert Switch Statement here
         switch(position){
             case 0:
                 fragment = new List_Fragment();
+                isEditing = false;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    this.invalidateOptionsMenu();
+                }
                 break;
             case 1:
                 fragment = new Form_Fragment();
                 args.putString(Form_Fragment.ENTRY_MODE, "add");
+                isEditing = true;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    this.invalidateOptionsMenu();
+                }
                 break;
             case 2:
                 fragment = new Form_Fragment();
                 args.putString(Form_Fragment.ENTRY_MODE, "edit");
                 args.putInt(Form_Fragment.ITEM_ID, user);
+                isEditing = true;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    this.invalidateOptionsMenu();
+                }
                 break;
 
         }
