@@ -192,23 +192,32 @@ public class Form_Fragment extends Fragment {
         valid_l_name = last_Name.getText().toString();
         valid_country = spinner.getSelectedItem().toString();
         valid_dob = dob_Text.getText().toString();
-        RadioButton selected = (RadioButton)getActivity().findViewById(r_group.getCheckedRadioButtonId());
-        valid_gender = (String)selected.getText().toString();
+        RadioButton selected = null;
+        if ((RadioButton)getActivity().findViewById(r_group.getCheckedRadioButtonId()) != null){
+        selected = (RadioButton)getActivity().findViewById(r_group.getCheckedRadioButtonId());
+            valid_gender = (String)selected.getText().toString();
+        }
+
         valid_profile_pic = imageAddress;
-        if(update == false) {
-            dbHandler.Add_Contact(new Contact(valid_f_name, valid_l_name, valid_country,
-                    valid_dob, valid_gender, valid_profile_pic));
-            Toast.makeText(getActivity(), "Contact Created", Toast.LENGTH_LONG).show();
-        }
-        else {
-            dbHandler.Update_Contact(new Contact(USER_ID, valid_f_name, valid_l_name, valid_country,
-                    valid_dob, valid_gender, valid_profile_pic));
-            Toast.makeText(getActivity(), "Contact Updated", Toast.LENGTH_LONG).show();
-        }
+        if(valid_f_name !=null && valid_country != null && valid_l_name != null && valid_dob != null && valid_gender != null && valid_profile_pic != null) {
 
-        com = (Interface)getActivity();
-        com.SelectItem(0, 0);
+            if (update == false) {
+                dbHandler.Add_Contact(new Contact(valid_f_name, valid_l_name, valid_country,
+                        valid_dob, valid_gender, valid_profile_pic));
+                Toast.makeText(getActivity(), "Contact Created", Toast.LENGTH_LONG).show();
+            } else {
+                dbHandler.Update_Contact(new Contact(USER_ID, valid_f_name, valid_l_name, valid_country,
+                        valid_dob, valid_gender, valid_profile_pic));
+                Toast.makeText(getActivity(), "Contact Updated", Toast.LENGTH_LONG).show();
+            }
 
+            com = (Interface) getActivity();
+            com.SelectItem(0, 0);
+        }
+        else
+        {
+            Toast.makeText(getActivity(), "Incomplete form, try again.", Toast.LENGTH_LONG).show();
+        }
     }
 
 }
