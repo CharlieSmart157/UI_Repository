@@ -1,9 +1,11 @@
 package com.example.charlie.myapplication;
 
+import io.realm.RealmObject;
+
 /**
  * Created by Charlie on 03/06/2016.
  */
-public class Contact {
+public class Contact extends RealmObject {
     public int _id;
     public String _nameFirst;
     public String _nameLast;

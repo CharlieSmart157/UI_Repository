@@ -30,7 +30,7 @@ public class Main2Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.second);
+        setContentView(R.layout.list_fragment_layout);
      //   readItems();
         lvItems = (ListView)findViewById(R.id.lvItems);
         lvItems.setItemsCanFocus(false);

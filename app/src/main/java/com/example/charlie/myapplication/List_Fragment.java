@@ -7,6 +7,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,21 +29,29 @@ import java.util.ArrayList;
 public class List_Fragment extends Fragment {
     ArrayList<Contact> items = new ArrayList<Contact>();
     Contact_Adapter itemsAdapter;
-    ListView lvItems;
+   // ListView lvItems;
     DatabaseHandler db;
     Interface com;
+    private RecyclerView lvItems;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.second, container, false);
-        lvItems = (ListView)view.findViewById(R.id.lvItems);
-        lvItems.setItemsCanFocus(false);
+        View view = inflater.inflate(R.layout.recycler_view_fragment, container, false);
+        //lvItems = (ListView)view.findViewById(R.id.lvItems);
+        //lvItems.setItemsCanFocus(false);
         //insert UI init
-        Set_refreshed_data();
+        initializeRecyclerView()
         return view;
     }
+    public void initializeRecyclerView(){
+        lvItems = (RecyclerView)findViewById(R.id.recyclerView);
+        lvItems.setLayoutManager(new LinearLayoutManager(this));
+        lvItems.setItemAnimator(new DefaultItemAnimator());
 
+        Set_refreshed_data();
+
+    }
     private void Set_refreshed_data(){
         items.clear();
         db = new DatabaseHandler(getActivity());
@@ -67,117 +78,11 @@ public class List_Fragment extends Fragment {
             items.add(cnt);
         }
         db.close();
-        itemsAdapter = new Contact_Adapter(getActivity(), R.layout.contact_list_view_expanded,
-                items);
+        itemsAdapter = new Contact_Adapter(getActivity(), items,R.layout.contact_list_view_expanded);
         lvItems.setAdapter(itemsAdapter);
         itemsAdapter.notifyDataSetChanged();
     }
 
 
-    public class Contact_Adapter extends ArrayAdapter<Contact> {
-        Activity activity;
-        int layoutResourceId;
-        Contact user;
-        ArrayList<Contact> data = new ArrayList<Contact>();
 
-        public Contact_Adapter(Activity act, int layoutResourceId,
-                               ArrayList<Contact> data) {
-            super(act, layoutResourceId, data);
-            this.layoutResourceId = layoutResourceId;
-            this.activity = act;
-            this.data = data;
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row = convertView;
-            UserHolder holder = null;
-
-            if (row == null) {
-                LayoutInflater inflater = LayoutInflater.from(activity);
-
-                row = inflater.inflate(layoutResourceId, parent, false);
-                holder = new UserHolder();
-                holder.first_name = (TextView) row.findViewById(R.id.user_f_name_txt);
-                holder.last_name = (TextView) row.findViewById(R.id.user_l_name_txt);
-                holder.dob_text = (TextView) row.findViewById(R.id.user_dob_txt);
-                holder.country_text = (TextView) row.findViewById(R.id.user_country_txt);
-                holder.gender_text = (TextView) row.findViewById(R.id.user_gender_txt);
-                holder.profile_picture = (ImageView) row.findViewById(R.id.user_picture);
-                holder.edit = (Button) row.findViewById(R.id.btn_edit);
-                holder.delete = (Button) row.findViewById(R.id.btn_delete);
-                row.setTag(holder);
-            } else {
-                holder = (UserHolder) row.getTag();
-            }
-            user = data.get(position);
-            holder.edit.setTag(user.getID());
-            holder.delete.setTag(user.getID());
-            holder.first_name.setText(user.get_nameFirst());
-            holder.last_name.setText(user.get_nameLast());
-            holder.dob_text.setText(user.get_dob());
-            holder.country_text.setText(user.get_country());
-            holder.gender_text.setText(user.get_gender());
-            //Decode Image
-            byte[] imageOutput = Base64.decode(user.get_picture().getBytes(),Base64.DEFAULT);
-            Bitmap img = BitmapFactory.decodeByteArray(imageOutput,0,imageOutput.length);
-            holder.profile_picture.setImageBitmap(img);
-
-            holder.edit.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    Log.i("Edit Button Clicked", ""+v.getTag());
-
-
-                    com = (Interface)getActivity();
-                    com.SelectItem(2, Integer.parseInt(v.getTag().toString()));
-
-                }
-            });
-            holder.delete.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(final View v) {
-                    // show a message while loader is loading
-
-                    AlertDialog.Builder adb = new AlertDialog.Builder(activity);
-                    adb.setTitle("Delete?");
-                    adb.setMessage("Are you sure you want to delete ");
-                    final int user_id = Integer.parseInt(v.getTag().toString());
-                    adb.setNegativeButton("Cancel", null);
-                    adb.setPositiveButton("Ok",
-                            new AlertDialog.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog,
-                                                    int which) {
-                                    // MyDataObject.remove(positionToRemove);
-                                    DatabaseHandler dBHandler = new DatabaseHandler(
-                                            activity.getApplicationContext());
-                                    dBHandler.Delete_Contact(Integer.parseInt(v.getTag().toString()));
-                                    Set_refreshed_data();
-                                }
-                            });
-                    adb.show();
-                }
-
-            });
-            return row;
-
-        }
-
-        class UserHolder {
-            TextView first_name;
-            TextView last_name;
-            TextView dob_text;
-            TextView gender_text;
-            TextView country_text;
-            ImageView profile_picture;
-            Button edit;
-            Button delete;
-        }
-
-    }
 }

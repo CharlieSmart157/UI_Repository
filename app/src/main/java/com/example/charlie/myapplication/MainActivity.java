@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialogF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.contact_fragment);
         initializeUI();
 
         String called_from = getIntent().getStringExtra("called");

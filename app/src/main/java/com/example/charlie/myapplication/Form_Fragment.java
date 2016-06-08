@@ -58,7 +58,7 @@ public class Form_Fragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        view = inflater.inflate(R.layout.activity_main,container,false);
+        view = inflater.inflate(R.layout.contact_fragment,container,false);
         String called_from = getArguments().getString(ENTRY_MODE);
         dbHandler = new DatabaseHandler(getActivity());
         initializeUI();
